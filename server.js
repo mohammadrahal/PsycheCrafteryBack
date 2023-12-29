@@ -10,13 +10,16 @@ app.use(bodyParser.json())
 // connect to database
 const connectedDB = require('./config/config')
 
+const AddFaq = require('./routes/faqRoute');
+
+app.use('/api', AddFaq )
+
 
 
 
 app.get('/', (_, res) => {
     res.send(`Hello World!`)
 })
-
 
 app.listen(PORT , function(error){
     if (error) console.log(`error in setup`)
