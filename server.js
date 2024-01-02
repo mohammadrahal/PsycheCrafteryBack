@@ -9,10 +9,15 @@ app.use(bodyParser.json())
 
 // connect to database
 const connectedDB = require('./config/config')
+const userRouter = require('./routes/userRoute')
+const faqRouter = require('./routes/faqRoute');
 
-const AddFaq = require('./routes/faqRoute');
 
-app.use('/api', AddFaq )
+
+
+
+app.use('/api', userRouter)
+app.use('/api', faqRouter )
 
 
 
