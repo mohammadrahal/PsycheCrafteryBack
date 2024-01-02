@@ -8,8 +8,8 @@ const {
      deleteFaq
     } = require("../controller/faqController");
 
-router.post("/add", addFaq);
-router.get("/get", getFaq)
-router.put('/update/:ID', updateFaq)
-router.delete('/delete/:ID', deleteFaq)
+router.post("/addFaq", addFaq);
+router.get("/getFaq", getFaq)
+router.put('/updateFaq/:ID', updateFaq)
+router.delete('/deleteFaq/:ID', deleteFaq)
 module.exports = router;
