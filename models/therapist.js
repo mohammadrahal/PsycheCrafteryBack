@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const THERAPY = new Schema ({
-fullName:{
-    type:String,
-    require:true
-}
+    name: {
+        type: String,
+        required: true
+      },
 
 })
 
