@@ -19,7 +19,7 @@ const getUser = async (_, res) => {
       data: user,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
@@ -44,7 +44,7 @@ const getById = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
@@ -70,40 +70,49 @@ const register = async (req, res) => {
 
      });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// login 
-const login = async ( req, res) =>{
-  const {email, password} = req.body
+const login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const user = await USER.findOne({email})
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!user || !passwordMatch) {
+    const user = await USER.findOne({ email });
+    
+    if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Email or Password  Wrong",
+        message: "Email or Password Wrong",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Email or Password Wrong",
       });
     }
 
     const token = generateToken(user._id, user.role);
-return res.status(200).json({
-  success:true,
-  message:'logged in successful',
-  data:token
-})
+    return res.status(200).json({
+      success: true,
+      message: 'Logged in successfully',
+      data: token,
+    });
   } catch (error) {
+    console.error("Login error:", error);
     return res.status(500).json({
-      success:false,
-      message: error.message,
-    })
+      success: false,
+      message: "An unexpected error occurred during login.",
+    });
   }
-}
+};
+
 
 
 // update data
@@ -126,7 +135,7 @@ const update = async (req, res) => {
 
     res.status(200).json({ message: 'User updated successfully', data: user });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -134,7 +143,7 @@ const update = async (req, res) => {
 const deleteById = async (req, res) => {
   try {
     const { ID } = req.params;
-    const user = await User.deleteOne({ _id: ID})
+    const user = await USER.deleteOne({ _id: ID})
     res.status(200).json({
       success: true,
       message: 'user deleted successfully',
