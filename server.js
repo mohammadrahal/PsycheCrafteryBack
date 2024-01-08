@@ -11,15 +11,15 @@ app.use(bodyParser.json())
 const connectedDB = require('./config/config')
 const userRouter = require('./routes/userRoute')
 const faqRouter = require('./routes/faqRoute');
-
-
+const therapyRouter = require('./routes/therapyRoute')
+const appointmentRouter = require('./routes/appointmentRoute')
 
 
 
 app.use('/api', userRouter)
+app.use('/api', therapyRouter)
 app.use('/api', faqRouter )
-
-
+app.use('/api', appointmentRouter)
 
 
 app.get('/', (_, res) => {

@@ -52,6 +52,7 @@ const getById = async (req, res) => {
 };
 
 // register
+let counter= 0;
 const register = async (req, res) => {
   const { fullName, email, password, phoneNumber, address } = req.body;
   try {
@@ -64,10 +65,10 @@ const register = async (req, res) => {
       address
     });
     await user.save();
-    res.json({ 
+    counter++;
+    return res.json({ 
       message: "Registration successful",
       data:user
-
      });
   } catch (error) {
     return res.status(400).json({
@@ -79,6 +80,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await USER.findOne({ email });
     
@@ -98,11 +100,17 @@ const login = async (req, res) => {
       });
     }
 
-    const token = generateToken(user._id, user.role);
+    let role = "user";
+    if (user.role === "therapy") {
+      role = "therapy";
+    }
+
+    const token = generateToken(user._id, role);
     return res.status(200).json({
       success: true,
       message: 'Logged in successfully',
       data: token,
+      role: role 
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -125,7 +133,7 @@ const update = async (req, res) => {
 
     const user = await USER.findByIdAndUpdate(
       ID,
-      { fullName, email, phoneNumber, address, password: hashedPassword },
+      { fullName, email, phoneNumber, address,  password: hashedPassword },
       { new: true }
     );
 
@@ -136,6 +144,38 @@ const update = async (req, res) => {
     res.status(200).json({ message: 'User updated successfully', data: user });
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+
+// switch to admin
+const switchToAdmin = async (req, res) => {
+  const { ID } = req.params;
+  try {
+    const switchUser = await USER.findOneAndUpdate(
+      { _id: ID },
+      { $set: { role: 'admin' } },
+      { new: true }
+    );
+
+    if (!switchUser) {
+      return res.status(400).json({
+        success: false,
+        message: `User  not found`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `User switched to admin successfully`,
+      data: switchUser,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: `Unable to switch to admin`,
+      error: error.message,
+    });
   }
 };
 
@@ -158,11 +198,24 @@ const deleteById = async (req, res) => {
   }
 };
 
+
+const userCounet = async(req, res) =>{
+  try {
+    const userCount = await USER.countDocuments();
+    res.json({ userCount });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user count" });
+}
+}
+
+
 module.exports = {
   getUser,
   getById,
   register,
   login,
   update,
-  deleteById
+  switchToAdmin,
+  deleteById, 
+  userCounet
 };

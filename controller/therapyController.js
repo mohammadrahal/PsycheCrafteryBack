@@ -1,10 +1,10 @@
-const THERAPY = require("../models/therapist");
-const bcrypt = require("bcrypt");
-const { imageUploader } = require("../extra/image");
+const THERAPY = require("../models/therapistModel");
+const USER = require("../models/userModel");
+const { imageUploader } = require("../extra/imageUploader");
 
 // get all therapy
 const getTherapy = async (_, res) => {
-  const therapy = await THERAPY.find({});
+  const therapy = await THERAPY.find().populate('userId', 'fullName email password phoneNumber address');
   try {
     if (!therapy || therapy.length === 0) {
       return res.status(404).json({
@@ -25,9 +25,9 @@ const getTherapy = async (_, res) => {
 };
 
 // by id
-const getByid = async (req, res) => {
+const getById = async (req, res) => {
   const { ID } = req.params;
-  const therapy = await THERAPY.findById(ID).select("-password");
+  const therapy = await THERAPY.findById(ID).populate('userId', 'fullName email password phoneNumber address');
   try {
     if (!therapy || therapy.length === 0) {
       return res.status(404).json({
@@ -45,25 +45,35 @@ const getByid = async (req, res) => {
     });
   }
 };
-
+let counter =0;
 //add therapy
 const addTherapy = async (req, res) => {
-  const {
-    fullName,
-    description,
-    education,
-    email,
-    password,
-    specialization,
-    phone,
-    address,
-  } = req.bpdy;
+  const { userId, description, education, specialization } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await USER.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    const imageURL = await imageUploader(req);
     const therapy = new THERAPY({
-        
-    })
+     userId,
+      description,
+      education,
+      specialization,
+      image: imageURL,
+    });
+    console.log(user)
+    console.log(therapy)
+
+    await therapy.save();
+    counter++
+    return res.status(200).json({
+      success: true,
+      message: "therapy added successfully",
+      data: therapy,
+    });
   } catch (error) {
     return res.status(400).json({
       message: error.message,
@@ -71,7 +81,20 @@ const addTherapy = async (req, res) => {
   }
 };
 
+
+
+
+const therapyCounter = async(req, res) =>{
+  try {
+    const therapyCount = await THERAPY.countDocuments();
+    res.json({ therapyCount });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user count" });
+}
+}
 module.exports = {
   getTherapy,
-  getByid,
+  getById,
+  addTherapy,
+  therapyCounter
 };
