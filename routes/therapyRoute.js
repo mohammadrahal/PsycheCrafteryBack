@@ -5,7 +5,7 @@ const {
     getTherapy,
     getById,
     addTherapy,
-    therapyCounter
+    deleteById
 } = require('../controller/therapyController')
 
 const multer = require('multer');
@@ -14,13 +14,11 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.get('/gettherapy',  getTherapy)
 router.get('/therapyById/:ID', getById)
-router.get('/therapyCounter', therapyCounter);
 router.post('/addtherapy', upload.single('image'), addTherapy)
-
-
-
-
+router.delete('/deleteTherapy/:ID', deleteById)
 
 
 
 module.exports = router
+
+

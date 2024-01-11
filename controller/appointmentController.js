@@ -69,17 +69,23 @@ const accepted = async (req, res) => {
 const canceled = async (req, res) => {
     const { ID } = req.params;
   try {
-    const cancelled = await Appointment.findByIdAndDelete(ID);
+    const cancelled = await Appointment.findByIdAndUpdate( 
+      ID,
+      { status: "cancelled" },
+      { new: true });
+
     if (!cancelled) {
       return res.status(404).json({
         success: false,
         message: 'Appointment not found',
       });
     }
+
     res.status(200).json({
       success: true,
       message: 'Appointment successfully cancelled'
     });
+    
   } catch (error) {
     res.status(400).json({
       success: false,
