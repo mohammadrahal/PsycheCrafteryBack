@@ -21,14 +21,14 @@ const USER = new Schema({
     type: String,
     required: true,
   },
-  
+
   address: {
     type: String,
     required: true,
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "admin", "therapy"],
     default: "user",
   },
 });

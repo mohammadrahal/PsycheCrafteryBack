@@ -19,7 +19,7 @@ const getUser = async (_, res) => {
       data: user,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
@@ -44,7 +44,7 @@ const getById = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
@@ -52,6 +52,7 @@ const getById = async (req, res) => {
 };
 
 // register
+let counter= 0;
 const register = async (req, res) => {
   const { fullName, email, password, phoneNumber, address } = req.body;
   try {
@@ -64,46 +65,62 @@ const register = async (req, res) => {
       address
     });
     await user.save();
-    res.json({ 
+    counter++;
+    return res.json({ 
       message: "Registration successful",
       data:user
-
      });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// login 
-const login = async ( req, res) =>{
-  const {email, password} = req.body
-  try {
-    const user = await USER.findOne({email})
-    const passwordMatch = await bcrypt.compare(password, user.password);
+const login = async (req, res) => {
+  const { email, password } = req.body;
 
-    if (!user || !passwordMatch) {
+  try {
+    const user = await USER.findOne({ email });
+    
+    if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Email or Password  Wrong",
+        message: "Email or Password Wrong",
       });
     }
 
-    const token = generateToken(user._id, user.role);
-return res.status(200).json({
-  success:true,
-  message:'logged in successful',
-  data:token
-})
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Email or Password Wrong",
+      });
+    }
+
+    let role = "user";
+    if (user.role === "therapy") {
+      role = "therapy";
+    }
+
+    const token = generateToken(user._id, role);
+    return res.status(200).json({
+      success: true,
+      message: 'Logged in successfully',
+      data: token,
+      role: role 
+    });
   } catch (error) {
+    console.error("Login error:", error);
     return res.status(500).json({
-      success:false,
-      message: error.message,
-    })
+      success: false,
+      message: "An unexpected error occurred during login.",
+    });
   }
-}
+};
+
 
 
 // update data
@@ -116,7 +133,7 @@ const update = async (req, res) => {
 
     const user = await USER.findByIdAndUpdate(
       ID,
-      { fullName, email, phoneNumber, address, password: hashedPassword },
+      { fullName, email, phoneNumber, address,  password: hashedPassword },
       { new: true }
     );
 
@@ -126,7 +143,39 @@ const update = async (req, res) => {
 
     res.status(200).json({ message: 'User updated successfully', data: user });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
+  }
+};
+
+
+// switch to admin
+const switchToAdmin = async (req, res) => {
+  const { ID } = req.params;
+  try {
+    const switchUser = await USER.findOneAndUpdate(
+      { _id: ID },
+      { $set: { role: 'admin' } },
+      { new: true }
+    );
+
+    if (!switchUser) {
+      return res.status(400).json({
+        success: false,
+        message: `User  not found`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `User switched to admin successfully`,
+      data: switchUser,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: `Unable to switch to admin`,
+      error: error.message,
+    });
   }
 };
 
@@ -134,7 +183,7 @@ const update = async (req, res) => {
 const deleteById = async (req, res) => {
   try {
     const { ID } = req.params;
-    const user = await User.deleteOne({ _id: ID})
+    const user = await USER.deleteOne({ _id: ID})
     res.status(200).json({
       success: true,
       message: 'user deleted successfully',
@@ -149,11 +198,24 @@ const deleteById = async (req, res) => {
   }
 };
 
+
+const userCounet = async(req, res) =>{
+  try {
+    const userCount = await USER.countDocuments();
+    res.json({ userCount });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user count" });
+}
+}
+
+
 module.exports = {
   getUser,
   getById,
   register,
   login,
   update,
-  deleteById
+  switchToAdmin,
+  deleteById, 
+  userCounet
 };
