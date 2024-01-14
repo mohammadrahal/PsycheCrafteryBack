@@ -36,6 +36,7 @@ const getById = async (req, res) => {
       });
     }
     return res.status(200).json({
+      success: true,
       message: "therapy found",
       data: therapy,
     });
@@ -45,17 +46,19 @@ const getById = async (req, res) => {
     });
   }
 };
-let counter =0;
+
+
 //add therapy
 const addTherapy = async (req, res) => {
   const { userId, description, education, specialization } = req.body;
-
   try {
     const user = await USER.findById(userId);
-
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
+
+    user.role = 'therapy';
+    await user.save();
     const imageURL = await imageUploader(req);
     const therapy = new THERAPY({
      userId,
@@ -64,18 +67,19 @@ const addTherapy = async (req, res) => {
       specialization,
       image: imageURL,
     });
-    console.log(user)
-    console.log(therapy)
 
+    // console.log(user)
+    // console.log(therapy)
     await therapy.save();
-    counter++
     return res.status(200).json({
       success: true,
       message: "therapy added successfully",
       data: therapy,
     });
+
   } catch (error) {
     return res.status(400).json({
+      success:false,
       message: error.message,
     });
   }
@@ -84,17 +88,29 @@ const addTherapy = async (req, res) => {
 
 
 
-const therapyCounter = async(req, res) =>{
+// delete therapy
+const deleteById = async (req, res) => {
   try {
-    const therapyCount = await THERAPY.countDocuments();
-    res.json({ therapyCount });
+    const { ID } = req.params;
+    const user = await THERAPY.deleteOne({ _id: ID})
+    res.status(200).json({
+      success: true,
+      message: 'Therapy deleted successfully',
+      data:user,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching user count" });
-}
-}
+    res.status(400).json({
+      success: false,
+      message: 'Error occured while deleting the user',
+      error: error,
+    });
+  }
+};
+
+
 module.exports = {
   getTherapy,
   getById,
   addTherapy,
-  therapyCounter
+  deleteById,
 };

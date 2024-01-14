@@ -2,7 +2,6 @@ const FAQ = require("../models/faqModel");
 
 // add faq questions
 const addFaq = async (req, res) => {
-  // const
   try {
     const faq = await FAQ.create(req.body);
     return res.status(200).json({
@@ -11,7 +10,7 @@ const addFaq = async (req, res) => {
       data: faq,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
@@ -33,7 +32,7 @@ const getFaq = async (_, res) => {
       data: faq,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       message: error.message,
     });
   }
@@ -62,7 +61,7 @@ const updateFaq = async (req, res) => {
       data: faq,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       message: error.message,
     });
   }
@@ -86,7 +85,7 @@ const deleteFaq = async (req, res) =>{
             data: faq,
           });
     } catch (error) {
-        return res.status(500).json({
+        return res.status(400).json({
             message: error.message,
           });
     }
