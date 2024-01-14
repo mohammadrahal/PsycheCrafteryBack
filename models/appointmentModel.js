@@ -14,7 +14,7 @@ const appointment = new Schema({
     required: true
   },
   
-  appointmentDate: Date,
+  appointmentDate: { type: Date, required: true },
 
   status: {
     type: String,

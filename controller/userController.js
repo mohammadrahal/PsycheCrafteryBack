@@ -55,6 +55,9 @@ const getById = async (req, res) => {
 // register
 const register = async (req, res) => {
   const { fullName, email, password, phoneNumber, address } = req.body;
+  if (password.length < 6) {
+    return res.status(400).json({ message: "Password less than 6 characters" })
+  }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new USER({
@@ -99,7 +102,7 @@ const login = async (req, res) => {
       });
     }
 
-    const token = generateToken(user._id, user.role);
+    const token = generateToken(user._id, user.role, user.fullName);
     return res.status(200).json({
       success: true,
       message: "Logged in successfully",
