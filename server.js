@@ -18,14 +18,14 @@ const server = http.createServer(app);
 
 const socketIO = socketIo(server, {
     cors: {
-        origin: "https://psychecraftery.onrender.com/",
-        methods: ["GET", "POST"],
-    }
-});
-
-app.use(cors({
-    origin: "https://psychecraftery.onrender.com/"
-}));
+      origin: "https://psychecraftery.onrender.com",
+      methods: ["GET", "POST"],
+    },
+  });
+  
+  app.use(cors({
+    origin: "https://psychecraftery.onrender.com",
+  }));
 app.use(bodyParser.json());
 
 // apis
