@@ -18,13 +18,13 @@ const server = http.createServer(app);
 
 const socketIO = socketIo(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "https://psychecraftery.onrender.com/",
         methods: ["GET", "POST"],
     }
 });
 
 app.use(cors({
-    origin: "http://localhost:3000"
+    origin: "https://psychecraftery.onrender.com/"
 }));
 app.use(bodyParser.json());
 
