@@ -2,7 +2,6 @@ const USER = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../middleware/generateToken");
 
-// get all users
 const getUser = async (_, res) => {
   //.select('-password') to get user info without password
   const user = await USER.find({}).select("-password");

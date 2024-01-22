@@ -4,13 +4,13 @@ const appointment = new Schema({
 
   therapistId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'THERAPY',
+    ref: 'therapy',
     required: true
   },
 
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'USER',
+    ref: 'user',
     required: true
   },
   
@@ -25,3 +25,5 @@ const appointment = new Schema({
 
 const Appointment =model('Appointment', appointment);
 module.exports = Appointment;
+
+
