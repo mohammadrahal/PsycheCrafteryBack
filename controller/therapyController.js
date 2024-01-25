@@ -128,7 +128,7 @@ const updateTherapy = async (req, res) => {
       throw new Error('No file provided for upload');
     }
     const imageUrl = await imageUploader(req);
-  console.log(imageUrl, "image")
+  // console.log(imageUrl, "image")
     const updatedFields = {
       userId,
       description,
