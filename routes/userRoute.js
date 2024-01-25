@@ -13,7 +13,7 @@ const {
 =require('../controller/userController')
 
 
-router.get('/get', getUser)
+router.get('/getuser', getUser)
 router.get('/getById/:ID', getById)
 router.post('/register', register)
 router.post('/login', login)
