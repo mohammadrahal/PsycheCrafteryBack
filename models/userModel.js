@@ -17,7 +17,8 @@ const USER = new Schema({
     type: String,
     required: true,
   },
-  phoneNumber: {
+
+  ph: {
     type: String,
     required: true,
   },
