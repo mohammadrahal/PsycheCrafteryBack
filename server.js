@@ -10,7 +10,7 @@ const faqRouter = require('./routes/faqRoute');
 const therapyRouter = require('./routes/therapyRoute');
 const appointmentRouter = require('./routes/appointmentRoute');
 const feedBackRouter = require('./routes/feedBackRoute')
-
+const blogRouter = require('./routes/blogRoute')
 const app = express();
 const server = http.createServer(app);
 const socketIO = socketIo(server, {
@@ -30,7 +30,7 @@ app.use('/api', therapyRouter);
 app.use('/api', faqRouter);
 app.use('/api', appointmentRouter);
 app.use('/api', feedBackRouter)
-
+app.use('/api', blogRouter)
 socketIO.on('connection', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`);
   
