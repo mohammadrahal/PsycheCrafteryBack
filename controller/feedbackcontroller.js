@@ -25,12 +25,13 @@ const getFeed = async (_, res) => {
 };
 
 const addFeed = async (req, res) => {
-  const { fullName, message, description } = req.body;
+  const { fullName, email, description, message } = req.body;
   try {
     const feedback = new FEEDBACK({
       fullName,
-      message,
+      email,
       description,
+      message
     });
     await feedback.save();
     return res.status(200).json({

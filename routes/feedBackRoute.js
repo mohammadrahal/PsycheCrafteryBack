@@ -9,7 +9,7 @@ const {
 } = require("../controller/feedbackcontroller");
 
 router.get("/getFeedBack", getFeed);
-router.post("/addFedd", addFeed);
+router.post("/addFeed", addFeed);
 router.put('/approvedFeed/:ID', approveFeed)
 router.delete('/deleteFeed/:ID', deleteFeed)
 module.exports = router;
